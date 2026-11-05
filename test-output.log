@@ -1,0 +1,70 @@
+# clean-clone rerun 2026-11-05: copied without out/ and cache/, then: BASE_RPC=https://base-rpc.publicnode.com forge test -vv
+Compiling 20 files with Solc 0.8.24
+Solc 0.8.24 finished in 16.70s
+Compiler run successful!
+
+Ran 7 tests for test/LumerinModelStakeFreeze.t.sol:LumerinModelStakeFreezeTest
+[PASS] test_candidate_liveModelIsAlreadyLockedAtThePinnedBlock() (gas: 182899)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  LIVE model blocked: owner 0x8B59eC5Da5E5CE83abB3BD9079472f7B25666302
+  LIVE model blocked: stake escrowed 100000000000000000
+  LIVE model blocked: the bid belongs to provider 0xB399E0009784bf0eb871e946643c92dC1055E362
+
+[PASS] test_candidate_oneWalletLocksEveryActiveModelItPointsAt() (gas: 16352716)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  SCALE: live models blocked by one unprivileged wallet 25
+  SCALE: escrowed stake now behind those bids (MOR-wei) 2500000000000000000
+  SCALE: cost to the attacker, bidFee x models (MOR-wei) 7500000000000000000
+
+[PASS] test_candidate_thirdPartyBidBlocksTheOwnersOnlyStakeExit() (gas: 1113488)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  LOCKED victim stake stuck in the diamond (MOR-wei) 100000000000000000
+  LOCKED victim MOR balance after both reverts 0
+
+[PASS] test_candidate_topUpIntoALockedModelIsAcceptedAndAlsoLocked() (gas: 1231675)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  TOP-UP: hostage size after an unchecked top-up (MOR-wei) 1100000000000000000
+
+[PASS] test_control_onlyTheProviderThatParkedTheBidCanReleaseIt() (gas: 1194550)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  CONTROL: after the provider deletes its bid the owner deregisters - the release is unilateral
+
+[PASS] test_control_ownerExitsWithItsStakeWhenNoBidIsParked() (gas: 178467)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  CONTROL: no third-party bid, owner exited with stake (MOR-wei) 100000000000000000
+
+[PASS] test_control_ownerKeepsAdministrationOfALockedModelButNotExit() (gas: 1090871)
+Logs:
+  live modelMinimumStake 100000000000000000
+  live providerMinimumStake 200000000000000000
+  live bidFee 300000000000000000
+  live bidMinPricePerSecond 10000000000
+  CONCESSION: the owner keeps control of the listing; only the stake exit is blocked
+
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 1.19s (175.00ms CPU time)
+
+Ran 1 test suite in 1.36s (1.19s CPU time): 7 tests passed, 0 failed, 0 skipped (7 total tests)
