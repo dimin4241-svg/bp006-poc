@@ -117,6 +117,13 @@ contract LumerinModelStakeFreezeTest is Test {
         assertEq(ModelHasActiveBids.selector, bytes4(0x633910a0), "error selector measured on chain");
         assertEq(InsufficientRightsForOperation.selector, bytes4(0x2e980d14), "error selector measured on chain");
 
+        // Program rule 2.1.5: no privileged account. The diamond's own owner() is read and both
+        // the pranked live model owner and every synthetic actor are shown to differ from it.
+        address protocolOwner = _protocolOwner();
+        assertTrue(protocolOwner != LIVE_OWNER, "the pranked model owner is not the protocol owner");
+        assertTrue(protocolOwner != victim && protocolOwner != attacker, "no test actor is the protocol owner");
+        console.log("diamond owner() at the pinned block", protocolOwner);
+
         modelMin = lumerin.getModelMinimumStake();
         providerMin = lumerin.getProviderMinimumStake();
         bidFee = lumerin.getBidFee();
@@ -127,6 +134,13 @@ contract LumerinModelStakeFreezeTest is Test {
         console.log("live bidMinPricePerSecond", minPrice);
 
         _victimRegistersModel();
+    }
+
+    /// The diamond's own owner(), read through the deployed dispatcher rather than assumed.
+    function _protocolOwner() internal view returns (address) {
+        (bool ok, bytes memory ret) = DIAMOND.staticcall(abi.encodeWithSignature("owner()"));
+        assertTrue(ok && ret.length == 32, "the diamond answers owner() at the pinned block");
+        return abi.decode(ret, (address));
     }
 
     /// victim stakes the protocol minimum on a model of its own - the money the lock holds.
@@ -200,6 +214,7 @@ contract LumerinModelStakeFreezeTest is Test {
         assertGt(active.length, 0, "an active bid is parked on the live model");
         (address bidProvider,, , , , ) = lumerin.getBid(active[0]);
         assertTrue(bidProvider != owner, "the blocking bid belongs to somebody else");
+        assertTrue(bidProvider != _protocolOwner(), "the blocking provider is not the protocol owner");
 
         vm.prank(owner);
         vm.expectRevert(ModelHasActiveBids.selector);
